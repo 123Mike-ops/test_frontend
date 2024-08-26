@@ -4,9 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SongsList from './components/SongsList';
 import SongForm from './components/SongForm';
+import Statistic from './components/Statistic';
 import { fetchSongsRequest } from './features/songs/songsSlice';
 import { RootState } from './store';
-
+import axios from 'axios';
+import { StatisticsResponse } from '../src/types/statistics';
+axios.defaults.baseURL = 'http://localhost:7000';
 export interface Song {
   _id: string;
   title: string;
@@ -14,6 +17,16 @@ export interface Song {
   album: string;
   genre: string;
 }
+
+export const fetchStatistics = async (): Promise<StatisticsResponse> => {
+  try {
+    const response = await axios.get<StatisticsResponse>('/v1/song/stat/all'); // Replace with your API endpoint
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching statistics:', error);
+    throw error;
+  }
+};
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -24,7 +37,6 @@ const App: React.FC = () => {
     dispatch(fetchSongsRequest());
   }, [dispatch]);
 
-  // Update local state when Redux state changes
   useEffect(() => {
     setLocalSongs(songs);
   }, [songs]);
@@ -35,8 +47,13 @@ const App: React.FC = () => {
   return (
     <div css={mainStyle}>
       <h1 css={headerStyle}>Songs</h1>
-      <SongForm />
-      <SongsList songs={localSongs} setSongs={setLocalSongs} />
+        <div css={ upper}>
+          <SongForm />
+          <SongsList songs={localSongs} setSongs={setLocalSongs} />
+        </div>
+         <div>
+           <Statistic />
+          </div>
     </div>
   );
 };
@@ -45,6 +62,13 @@ const mainStyle = css`
   padding: 20px;
   background-color: #f7f7f7;
   display: flex;
+  flex-direction:column;
+`;
+const upper = css`
+  padding: 20px;
+  background-color: #f7f7f7;
+  display: flex;
+
 `;
 
 const headerStyle = css`

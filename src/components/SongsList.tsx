@@ -78,7 +78,7 @@ const SongsList: React.FC<{ songs: Song[], setSongs: React.Dispatch<React.SetSta
                     value={editedSong.title || ''}
                     onChange={handleChange}
                   />
-                </div>
+                </div>  
                 <div css={tableCell}>
                   <input
                     type="text"
